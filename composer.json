@@ -1,0 +1,22 @@
+{
+    "name": "assane/devoir_2",
+    "autoload": {
+        "psr-4": {
+            "App\\Entity\\": "src/Entity/",
+            "App\\DTO\\": "src/DTO/",
+            "App\\Http\\": "src/Http/",
+            "App\\Repository\\": "src/Repository/",
+            "App\\Service\\": "src/Service/",
+            "App\\Config\\": "src/Config/",
+            "App\\Routing\\": "src/Routing/",
+            "App\\Core\\": "src/Core/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ton Prenom Nom",
+            "email": "ton@email.com"
+        }
+    ],
+    "require": {}
+}
