@@ -6,5 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Assane\\Devoir2\\' => array($baseDir . '/src'),
+    'App\\Service\\' => array($baseDir . '/src/Service'),
+    'App\\Routing\\' => array($baseDir . '/src/Routing'),
+    'App\\Repository\\' => array($baseDir . '/src/Repository'),
+    'App\\Http\\' => array($baseDir . '/src/Http'),
+    'App\\Entity\\' => array($baseDir . '/src/Entity'),
+    'App\\DTO\\' => array($baseDir . '/src/DTO'),
+    'App\\Core\\' => array($baseDir . '/src/Core'),
+    'App\\Config\\' => array($baseDir . '/src/Config'),
 );
