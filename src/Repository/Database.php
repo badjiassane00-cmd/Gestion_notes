@@ -1,54 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use PDO;
-use PDOException;
-
-
-class Database
+final class Database
 {
-    private static ?PDO $connection = null;
-    private string $host;
-    private string $dbName;
-    private string $username;
-    private string $password;
-    private int $port;
+    private static ?self $instance = null;
+    private \PDO $connection;
 
-    private function __construct()
+    private function __construct(array $configuration)
     {
-        $this->host =  $_ENV['DB_HOST'] ?? 'localhost';
-        $this->dbName =  $_ENV['DB_NAME'] ?? 'note_universitaire';
-        $this->username =  $_ENV['DB_USER'] ?? 'postgres';
-        $this->password =  $_ENV['DB_PASS'] ?? 'default';
-        $this->port =  $_ENV['DB_PORT'] ?? 5432;
+        $driver = $configuration['driver'] ?? 'pgsql';
+        $host = $configuration['host'] ?? 'localhost';
+        $port = $configuration['port'] ?? 5432;
+        $dbname = $configuration['dbname'] ?? 'notes_universitaire';
+        $options = $configuration['options'] ?? [
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            \PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+
+        $this->connection = new \PDO(
+            "$driver:host=$host;port=$port;dbname=$dbname",
+            $configuration['user'] ?? 'postgres',
+            $configuration['password'] ?? '',
+            $options
+        );
     }
 
-
-    public static function getConnection(): PDO
+    public static function getInstance(array $configuration): self
     {
-        if (self::$connection === null) {
-            self::$connection = (new self())->connect();
+        if (self::$instance === null) {
+            self::$instance = new self($configuration);
         }
-        return self::$connection;
+
+        return self::$instance;
     }
 
-    private function connect(): PDO
+    public function getConnection(): \PDO
     {
-        try {
-            $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->dbName}";
-            $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ];
-            return new PDO($dsn, $this->username, $this->password, $options);
-        } catch (PDOException $e) {
-            die("Erreur de connexion à la base de données : " . $e->getMessage());
-        }
+        return $this->connection;
     }
-  
+
     public static function closeConnection(): void
     {
-        self::$connection = null;
+        self::$instance = null;
     }
 }

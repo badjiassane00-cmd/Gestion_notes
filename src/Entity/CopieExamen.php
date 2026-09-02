@@ -5,7 +5,6 @@ namespace App\Entity;
 
 class CopieExamen extends AbstractDocument {
     private float $noteBrute;
-    private float $noteFinale;
     private bool $penaliteAppliquee;
     private string $dateLimite;
 
@@ -17,23 +16,12 @@ class CopieExamen extends AbstractDocument {
         $this->dateLimite = $dateLimite;
     }
 
-    public function calculerNoteFinale(float $noteFinale): void {
-        if ($this->penaliteAppliquee) {
-            $this->noteFinale = max(0, $this->noteBrute - 2);
-        } else {
-            $this->noteFinale = $this->noteBrute;
-        }
-    }
-
     public function getNoteBrute(): float {
         return $this->noteBrute;
     }
     public function setNoteBrute(float $noteBrute): void {
         $this->verifierNote($noteBrute);
         $this->noteBrute = $noteBrute;
-    }
-    public function getNoteFinale(): float {
-        return $this->noteFinale;
     }
     public function isPenaliteAppliquee(): bool {
         return $this->penaliteAppliquee;
