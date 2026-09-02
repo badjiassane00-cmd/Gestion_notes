@@ -6,5 +6,17 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Assane\\Devoir2\\' => array($baseDir . '/src'),
+    'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
+    'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src/PhpOption'),
+    'GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
+    'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
+    'App\\Service\\' => array($baseDir . '/src/Service'),
+    'App\\Router\\' => array($baseDir . '/src/Router'),
+    'App\\Repository\\' => array($baseDir . '/src/Repository'),
+    'App\\Entity\\' => array($baseDir . '/src/Entity'),
+    'App\\DTO\\' => array($baseDir . '/src/DTO'),
+    'App\\Controller\\' => array($baseDir . '/src/Controller'),
+    'App\\Container\\' => array($baseDir . '/src/Container'),
 );

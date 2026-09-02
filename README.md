@@ -21,3 +21,15 @@ Front Controller : un point d'entrée unique permet de centraliser le chargement
 
 **Comment avez-vous réparti les responsabilités entre vos dossiers ?**
  Entity (objets métier), Controller (réception des requêtes), View (affichage), Repository (accès aux données), Servic (traitements applicatifs),`Config (configuration), Routing (résolution des URL) — chaque dossier correspond à une seule responsabilité, conformément au SRP déjà justifié en introduction.   
+
+ **Quelle classe doit être responsable de la connexion ?**
+→Database, dans src/Container/. C'est la seule classe qui parle à PDO directement — le Repository lui délègue toute la connexion plutôt que d'ouvrir sa propre instance PDO.
+
+**Faut-il créer une nouvelle connexion pour chaque requête SQL ?**
+→Non. Une seule connexion PDO est ouverte (via l'instance statique conservée dans Database) et réutilisée pour toutes les requêtes SQL de la même exécution , ouvrir une connexion par requête gaspillerait des ressources inutilement.
+
+**Où placer les identifiants de connexion ?**
+ Dans un fichier .env, à la racine du projet, hors de src/ et exclu de Git via .gitignore. EnvLoader le lit et transmet les valeurs à Database , aucun identifiant n'est écrit en dur dans une classe.
+
+**Pourquoi utiliser PDO ?**
+PDO permet les requêtes préparées (protection contre les injections SQL) et reste indépendant du système de base de données utilisé.

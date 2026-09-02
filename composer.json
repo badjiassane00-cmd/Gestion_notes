@@ -2,14 +2,13 @@
     "name": "assane/devoir_2",
     "autoload": {
         "psr-4": {
-            "App\\Entity\\": "src/Entity/",
+            "App\\Controller\\": "src/Controller/",
+            "App\\Container\\": "src/Container/",
             "App\\DTO\\": "src/DTO/",
-            "App\\Http\\": "src/Http/",
+            "App\\Entity\\": "src/Entity/",
             "App\\Repository\\": "src/Repository/",
-            "App\\Service\\": "src/Service/",
-            "App\\Config\\": "src/Config/",
-            "App\\Routing\\": "src/Routing/",
-            "App\\Core\\": "src/Core/"
+            "App\\Router\\": "src/Router/",
+            "App\\Service\\": "src/Service/"
         }
     },
     "authors": [
@@ -18,5 +17,7 @@
             "email": "ton@email.com"
         }
     ],
-    "require": {}
+    "require": {
+        "vlucas/phpdotenv": "^5.7"
+    }
 }
