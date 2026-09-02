@@ -2,7 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Container\Database;
-use App\Container\EnvLoader;
+use App\Repository\Database;
+use Dotenv\Dotenv;
 
-$config = EnvLoader::load(__DIR__ . '/../.env');
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+$pdo = Database::getConnection();
