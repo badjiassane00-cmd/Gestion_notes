@@ -3,69 +3,52 @@
 namespace App\Repository;
 
 use App\Entity\CopieExamen;
+use PDO;
 
-class PdoCopieExamenRepository extends AbstractRepository implements CopieExamenRepositoryInterface
+final class PdoCopieExamenRepository extends AbstractRepository implements CopieExamenRepositoryInterface
 {
-    public function __construct(\PDO $pdo)
+    private static ?self $instance = null;
+
+    public static function getInstance(PDO $pdo): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($pdo);
+        }
+
+        return self::$instance;
+    }
+
+    public function __construct(PDO $pdo)
     {
         parent::__construct($pdo);
     }
 
-    public function save(CopieExamen $copie): CopieExamen
+    public function save(CopieExamen $copieExamen): CopieExamen
     {
-        if ($copie->getId() === null) {
-            return $this->insert($copie);
-        }
+        $sql = 'INSERT INTO copies (note_brute, note_finale, penalite_appliquee, date_depot, date_limite)
+                VALUES (:note_brute, :note_finale, :penalite_appliquee, :date_depot, :date_limite)';
 
-        return $this->update($copie);
-    }
-
-    private function insert(CopieExamen $copie): CopieExamen
-    {
-        $sql = 'INSERT INTO copies (note_brute, note_finale, penalite_appliquee, date_limite, date_depot)
-                VALUES (:note_brute, :note_finale, :penalite_appliquee, :date_limite, :date_depot)
-                RETURNING id';
-
-        $resultat = $this->executeQuery($sql, [
-            'note_brute' => $copie->getNoteBrute(),
-            'note_finale' => $copie->getNoteFinale(),
-            'penalite_appliquee' => $copie->isPenaliteAppliquee(),
-            'date_limite' => $copie->getDateLimite(),
-            'date_depot' => $copie->getDateDepot(),
+        $id = $this->executeUpdate($sql, [
+            'note_brute' => $copieExamen->getNoteBrute(),
+            'note_finale' => $copieExamen->getNoteFinale(),
+            'penalite_appliquee' => $copieExamen->isPenaliteAppliquee() ? 1 : 0,
+            'date_depot' => $copieExamen->getDateDepot(),
+            'date_limite' => $copieExamen->getDateLimite(),
         ]);
 
-        $copie->setId((int) $resultat->id);
+        $copieExamen->setId((int) $id);
 
-        return $copie;
-    }
-
-    private function update(CopieExamen $copie): CopieExamen
-    {
-        $sql = 'UPDATE copies
-                SET note_brute = :note_brute,
-                    note_finale = :note_finale,
-                    penalite_appliquee = :penalite_appliquee,
-                    date_limite = :date_limite,
-                    date_depot = :date_depot
-                WHERE id = :id';
-
-        $this->executeUpdate($sql, [
-            'note_brute' => $copie->getNoteBrute(),
-            'note_finale' => $copie->getNoteFinale(),
-            'penalite_appliquee' => $copie->isPenaliteAppliquee(),
-            'date_limite' => $copie->getDateLimite(),
-            'date_depot' => $copie->getDateDepot(),
-            'id' => $copie->getId(),
-        ]);
-
-        return $copie;
+        return $copieExamen;
     }
 
     public function findAll(): array
     {
         $lignes = $this->getAllData('copies');
 
-        return array_map(fn($ligne) => $this->hydrater($ligne), $lignes);
+        return array_map(
+            fn ($ligne) => $this->toEntity($ligne),
+            $lignes
+        );
     }
 
     public function findById(int $id): ?CopieExamen
@@ -74,25 +57,24 @@ class PdoCopieExamenRepository extends AbstractRepository implements CopieExamen
 
         $ligne = $this->executeQuery($sql, ['id' => $id]);
 
-        if ($ligne === false) {
+        if (!$ligne) {
             return null;
         }
 
-        return $this->hydrater($ligne);
+        return $this->toEntity($ligne);
     }
 
-    private function hydrater(object $ligne): CopieExamen
+    private function toEntity(\stdClass $ligne): CopieExamen
     {
-        $copie = new CopieExamen(
-            dateDepot: $ligne->date_depot,
-            noteBrute: (float) $ligne->note_brute,
-            penaliteAppliquee: (bool) $ligne->penalite_appliquee,
-            dateLimite: $ligne->date_limite,
-            id: (int) $ligne->id
+        $copieExamen = new CopieExamen(
+            new \DateTimeImmutable($ligne->date_depot),
+            (float) $ligne->note_brute,
+            (bool) $ligne->penalite_appliquee,
+            new \DateTimeImmutable($ligne->date_limite),
+            (int) $ligne->id
         );
+        $copieExamen->setNoteFinale((float) $ligne->note_finale);
 
-        $copie->setNoteFinale((float) $ligne->note_finale);
-
-        return $copie;
+        return $copieExamen;
     }
 }

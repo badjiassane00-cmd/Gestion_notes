@@ -4,5 +4,7 @@ namespace App\Service;
 
 interface CalculNoteInterface
 {
-    public function calculer(float $noteBrute, bool $penaliteAppliquee): float;
+    public function estEnRetard(\DateTimeImmutable $dateDepot, \DateTimeImmutable $dateLimite): bool;
+
+    public function calculerNoteFinale(float $noteBrute, bool $enRetard): float;
 }
