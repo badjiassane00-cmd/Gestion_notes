@@ -6,29 +6,31 @@ use App\DTO\SoumettreCopieDTO;
 use App\Entity\CopieExamen;
 use App\Repository\CopieExamenRepositoryInterface;
 
-class SoumissionCopieService
+final class SoumissionCopieService
 {
     public function __construct(
-        private CalculNoteInterface $calculNote,
-        private CopieExamenRepositoryInterface $repository
+        private readonly CalculNoteInterface $calculNote,
+        private readonly CopieExamenRepositoryInterface $copieExamenRepository
     ) {
     }
 
     public function soumettre(SoumettreCopieDTO $dto): CopieExamen
     {
-        $penaliteAppliquee = $dto->dateDepot > $dto->dateLimite;
-
-        $noteFinale = $this->calculNote->calculer($dto->noteBrute, $penaliteAppliquee);
-
-        $copie = new CopieExamen(
-            dateDepot: $dto->dateDepot->format('Y-m-d'),
-            noteBrute: $dto->noteBrute,
-            penaliteAppliquee: $penaliteAppliquee,
-            dateLimite: $dto->dateLimite->format('Y-m-d')
+        $enRetard = $this->calculNote->estEnRetard(
+            $dto->dateDepot,
+            $dto->dateLimite
         );
 
-        $copie->setNoteFinale($noteFinale);
+        $noteFinale = $this->calculNote->calculerNoteFinale($dto->noteBrute, $enRetard);
 
-        return $this->repository->save($copie);
+        $copieExamen = new CopieExamen(
+            $dto->dateDepot,
+            $dto->noteBrute,
+            $enRetard,
+            $dto->dateLimite
+        );
+        $copieExamen->setNoteFinale($noteFinale);
+
+        return $this->copieExamenRepository->save($copieExamen);
     }
 }

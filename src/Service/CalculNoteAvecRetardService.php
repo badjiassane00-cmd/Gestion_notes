@@ -1,17 +1,22 @@
 <?php
 
 namespace App\Service;
-
-class CalculNoteAvecRetardService implements CalculNoteInterface
+use App\Service\CalculNoteInterface;
+final class CalculNoteAvecRetardService implements CalculNoteInterface
 {
-    public function calculer(float $noteBrute, bool $penaliteAppliquee): float
+    private const PENALITE_RETARD = 2.0;
+
+    public function estEnRetard(\DateTimeImmutable $dateDepot, \DateTimeImmutable $dateLimite): bool
     {
-        if (!$penaliteAppliquee) {
+        return $dateDepot > $dateLimite;
+    }
+
+    public function calculerNoteFinale(float $noteBrute, bool $enRetard): float
+    {
+        if (!$enRetard) {
             return $noteBrute;
         }
 
-        return max(0, $noteBrute - 2);
+        return max(0.0, $noteBrute - self::PENALITE_RETARD);
     }
-   
-
 }

@@ -6,8 +6,7 @@ use App\Entity\CopieExamen;
 
 interface CopieExamenRepositoryInterface
 {
-    public function save(CopieExamen $copie): CopieExamen;
-
+    public function save(CopieExamen $copieExamen): CopieExamen;
 
     public function findAll(): array;
 

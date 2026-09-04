@@ -13,8 +13,8 @@ class Router
     {
         $dispatcher = simpleDispatcher(require dirname(__DIR__, 2) . '/config/routes.php');
 
-        $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-        $methode = $_SERVER['REQUEST_METHOD'];
+        $uri = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+        $methode = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         $routeInfo = $dispatcher->dispatch($methode, $uri);
 

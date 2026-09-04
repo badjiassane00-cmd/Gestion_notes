@@ -26,9 +26,7 @@
         <h1>Enregistrer une nouvelle copie.</h1>
         <p class="subtitle">Saisissez les informations de l'étudiant et laissez le système calculer automatiquement la note finale.</p>
 
-        <?php if (!empty($erreurs)): ?>
-            <?php require __DIR__ . '/erreur.php'; ?>
-        <?php endif; ?>
+      
 
         <div class="form-shell">
             <aside class="info-panel">

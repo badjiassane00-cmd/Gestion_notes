@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\DTO\SoumettreCopieDTO;
 use App\Repository\CopieExamenRepositoryInterface;
 use App\Service\SoumissionCopieService;
-use InvalidArgumentException;
+
 
 class CopieExamenController
 {
@@ -28,7 +28,7 @@ class CopieExamenController
 
             header('Location: /copies/' . $copie->getId());
             exit;
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $erreurs = [$e->getMessage()];
             $this->afficherFormulaire($erreurs);
         }
